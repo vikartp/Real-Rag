@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [jwtToken, setJwtToken] = useState<string | null>(null);
 
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: "Hi! Upload a PDF to get started, and then ask me anything about it." }
@@ -30,6 +31,27 @@ export default function Dashboard() {
     }
   }, [status, router]);
 
+  // Fetch NextAuth JWT token when authenticated
+  useEffect(() => {
+    const fetchToken = async () => {
+      if (status === "authenticated" && session?.user) {
+        try {
+          // Get the NextAuth JWT token from our API route
+          const nextAuthRes = await axios.get("/api/get-nextauth-token");
+          const nextAuthToken = nextAuthRes.data.nextAuthToken;
+          
+          // Store NextAuth token directly (no token exchange needed!)
+          setJwtToken(nextAuthToken);
+          localStorage.setItem("jwt_token", nextAuthToken);
+        } catch (error) {
+          console.error("Failed to get NextAuth JWT token:", error);
+        }
+      }
+    };
+    
+    fetchToken();
+  }, [status, session]);
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -37,18 +59,19 @@ export default function Dashboard() {
   if (status !== "authenticated") return null;
 
   const handleUpload = async () => {
-    if (!file) return;
+    if (!file || !jwtToken) return;
     setIsUploading(true);
     setUploadSuccess(false);
 
     const formData = new FormData();
     formData.append("file", file);
-    // Cast session user id since we injected it in route.ts
-    formData.append("user_id", (session.user as any).id || session.user?.email || "anonymous");
 
     try {
       await axios.post(`${API_URL}/api/upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${jwtToken}`
+        }
       });
       setUploadSuccess(true);
       setMessages(prev => [...prev, { role: "assistant", content: "Document processed successfully! What would you like to know?" }]);
@@ -61,7 +84,7 @@ export default function Dashboard() {
   };
 
   const handleSend = async () => {
-    if (!input.trim() || !uploadSuccess) return;
+    if (!input.trim() || !uploadSuccess || !jwtToken) return;
 
     const userMsg = input.trim();
     setMessages(prev => [...prev, { role: "user", content: userMsg }]);
@@ -70,8 +93,11 @@ export default function Dashboard() {
 
     try {
       const res = await axios.post(`${API_URL}/api/ask`, {
-        user_id: (session.user as any).id || session.user?.email || "anonymous",
         question: userMsg
+      }, {
+        headers: {
+          "Authorization": `Bearer ${jwtToken}`
+        }
       });
       setMessages(prev => [...prev, { role: "assistant", content: res.data.answer }]);
     } catch (error) {
@@ -121,7 +147,7 @@ export default function Dashboard() {
           </div>
 
           <button
-            disabled={!file || isUploading || uploadSuccess}
+            disabled={!file || isUploading || uploadSuccess || !jwtToken}
             onClick={handleUpload}
             className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed font-medium transition-all flex justify-center items-center shadow-lg shadow-indigo-600/20 disabled:shadow-none"
           >
@@ -129,6 +155,8 @@ export default function Dashboard() {
               <><Loader2 className="animate-spin h-5 w-5 mr-2" /> Processing...</>
             ) : uploadSuccess ? (
               "Ready to Answer"
+            ) : !jwtToken ? (
+              "Authenticating..."
             ) : (
               "Upload and Process"
             )}
@@ -147,7 +175,13 @@ export default function Dashboard() {
             <div className="font-medium text-sm truncate">{session?.user?.name}</div>
             <div className="text-xs text-slate-500 truncate">{session?.user?.email}</div>
           </div>
-          <button onClick={() => signOut()} className="text-slate-500 hover:text-rose-400 transition-colors">
+          <button 
+            onClick={() => {
+              localStorage.removeItem("jwt_token");
+              signOut();
+            }} 
+            className="text-slate-500 hover:text-rose-400 transition-colors"
+          >
             <LogOut className="h-5 w-5" />
           </button>
         </div>
@@ -217,12 +251,18 @@ export default function Dashboard() {
               }}
               disabled={!uploadSuccess || isAsking}
               placeholder={uploadSuccess ? "Ask a question about your PDF..." : "Please upload a document first..."}
-              className="w-full bg-slate-900 border border-slate-800 rounded-full px-6 py-4 pr-16 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className={`w-full rounded-full px-6 py-4 pr-16 focus:outline-none transition-all duration-300 text-lg ${uploadSuccess && !isAsking
+                ? "bg-slate-800 border-2 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.2)] text-white placeholder:text-indigo-200/70 focus:bg-slate-800 focus:border-indigo-400 focus:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:border-indigo-400 hover:shadow-[0_0_25px_rgba(99,102,241,0.3)]"
+                : "bg-slate-900 border border-slate-800 text-slate-500 placeholder:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50 shadow-md"
+                }`}
             />
             <button
               onClick={handleSend}
               disabled={!input.trim() || !uploadSuccess || isAsking}
-              className="absolute right-2 top-2 p-2 rounded-full bg-indigo-600 text-white disabled:bg-slate-800 disabled:text-slate-600 transition-colors hover:bg-indigo-500"
+              className={`absolute right-2 top-2 p-2.5 rounded-full flex items-center justify-center transition-all duration-300 ${input.trim() && uploadSuccess && !isAsking
+                ? "bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.5)] hover:bg-indigo-400 hover:-translate-y-0.5 hover:scale-105"
+                : "bg-slate-800 text-slate-600 cursor-not-allowed opacity-50"
+                }`}
             >
               <Send className="h-5 w-5" />
             </button>
