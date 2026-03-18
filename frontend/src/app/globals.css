@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0f172a; /* slate-950 */
+  --foreground: #f8fafc; /* slate-50 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.design-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.design-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.design-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2);
+  border-radius: 4px;
+}
+.design-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.4);
+}
