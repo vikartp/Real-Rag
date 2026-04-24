@@ -113,7 +113,7 @@ NEXT_PUBLIC_FRONTEND_API_KEY=abc123xyz...  # ← MUST MATCH backend
 ```bash
 # Backend
 cd backend
-uvicorn main:app --reload
+uv run python -m uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 
 # Frontend
 cd frontend

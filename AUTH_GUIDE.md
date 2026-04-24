@@ -47,7 +47,7 @@ Since the token endpoint is protected, you need to get a token from the running 
    ```bash
    # Terminal 1 - Backend
    cd backend
-   uvicorn main:app --reload
+   uv run python -m uvicorn main:app --host 0.0.0.0 --port 8080 --reload
    
    # Terminal 2 - Frontend
    cd frontend

@@ -11,7 +11,7 @@ uv venv
 uv sync
 
 # Run the server
-uv run uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+uv run python -m uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
 See the root [README.md](../README.md) for full documentation.

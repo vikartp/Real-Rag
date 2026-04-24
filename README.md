@@ -112,7 +112,7 @@ uv venv
 uv sync
 
 # Start the backend server
-uv run uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+uv run python -m uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
 The API will be available at `http://localhost:8080`. Visit `http://localhost:8080/docs` for interactive API documentation.
