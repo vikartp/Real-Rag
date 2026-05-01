@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Real-RAG API now uses JWT (JSON Web Token) authentication to secure all endpoints. This prevents unauthorized access via Swagger docs or direct API calls.
+The KnowledgeAI API now uses JWT (JSON Web Token) authentication to secure all endpoints. This prevents unauthorized access via Swagger docs or direct API calls.
 ## Security Architecture
 
 ### Multi-Layer Security

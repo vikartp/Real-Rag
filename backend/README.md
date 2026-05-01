@@ -1,6 +1,6 @@
-# Real-RAG Backend
+# KnowledgeAI Backend
 
-FastAPI backend for the Real-RAG application.
+FastAPI backend for the KnowledgeAI application.
 
 ## Quick Start
 

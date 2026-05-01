@@ -26,7 +26,7 @@ if not NEXTAUTH_SECRET:
     raise ValueError("NEXTAUTH_SECRET environment variable is required for authentication")
 
 app = FastAPI(
-    title="Real-Rag backend API",
+    title="KnowledgeAI backend API",
     description="RAG API with JWT authentication",
     version="1.0.0",
     swagger_ui_parameters={
@@ -193,4 +193,4 @@ async def ask_question(
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the Real-Rag API. Endpoint is up and running."}
+    return {"message": "Welcome to the KnowledgeAI API. Endpoint is up and running."}

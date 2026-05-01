@@ -1,4 +1,4 @@
-# 🧠 Real-RAG
+# 🧠 KnowledgeAI
 
 > A full-stack **Retrieval-Augmented Generation** application that lets users upload PDF documents and ask natural language questions about their content — powered by LangChain, ChromaDB, and OpenAI.
 
@@ -50,7 +50,7 @@
 ## 📁 Project Structure
 
 ```
-Real-Rag/
+KnowledgeAI/
 ├── frontend/                    # Next.js 16 application
 │   ├── src/
 │   │   ├── app/
@@ -94,8 +94,8 @@ Real-Rag/
 ### 1. Clone the Repository(Git repo to be created)
 
 ```bash
-git clone https://github.com/your-username/Real-Rag.git
-cd Real-Rag
+git clone https://github.com/your-username/KnowledgeAI.git
+cd KnowledgeAI
 ```
 
 ### 2. Setup Backend

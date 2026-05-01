@@ -115,7 +115,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-indigo-400 font-bold text-xl drop-shadow-sm">
             <MessageSquare className="h-6 w-6" />
-            <span>Real-RAG</span>
+            <span>KnowledgeAI</span>
           </div>
         </div>
 
@@ -268,7 +268,7 @@ export default function Dashboard() {
             </button>
           </div>
           <div className="mt-3 text-center text-xs text-slate-500">
-            Real-RAG models can make mistakes. Verify important information.
+            KnowledgeAI models can make mistakes. Verify important information.
           </div>
         </div>
       </main>

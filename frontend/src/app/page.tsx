@@ -28,7 +28,7 @@ export default function Home() {
         </div>
 
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-gradient-to-br from-white via-slate-200 to-indigo-400 bg-clip-text text-transparent drop-shadow-sm">
-          Welcome to Real-RAG
+          Welcome to KnowledgeAI
         </h1>
         
         <p className="max-w-2xl text-lg md:text-xl text-slate-400 leading-relaxed">
